@@ -1,0 +1,117 @@
+import "./App.css";
+
+import { useState } from "react";
+
+function App(props) {
+  const [todoList, setDoList] = useState([]);
+  const [newTask, setnewTask] = useState("");
+
+  const handelChange = (event) => {
+    setnewTask(event.target.value);
+    // setter
+    localStorage.setItem("todoList", JSON.stringify(todoList));
+  };
+
+  const handelTask = () => {
+    // const newArr = [...todoList, newTask];
+    const task = {
+      id: todoList.length == 0 ? 1 : todoList[todoList.length - 1].id + 1,
+      taskName: newTask,
+      completed: false,
+    };
+    setDoList([...todoList, task]);
+    setnewTask("");
+
+  };
+
+  const handelRemove = (id) => {
+    const newTodo = todoList.filter((task) => {
+      return task.id !== id;
+    });
+    setDoList(newTodo);
+  };
+  const handelCompleted = (id) => {
+    setDoList(
+      todoList.map((task) => {
+        if (task.id === id) {
+          return { ...task, completed: true };
+        } else {
+          return task;
+        }
+      })
+    );
+  };
+  // getter
+  const textFromStorage = localStorage.getItem("todoList");
+  const todoListObjectAgain = JSON.parse(textFromStorage);
+  return (
+    <div className="App">
+      <div className="addTask mt-5">
+        <input type="text" onChange={handelChange} value={newTask} />
+        <button onClick={handelTask}>add</button>
+      </div>
+      <div className="list">
+        <h1>{textFromStorage}</h1>
+        <ul>
+          {todoList.map((task) => {
+            return (
+              <div
+                key={task.id}
+                style={{ background: task.completed ? "green" : "withe" }}
+              >
+                <li>Task {task.taskName}</li>
+                <button onClick={() => handelCompleted(task.id)}>Done</button>
+                <button onClick={() => handelRemove(task.id)}>Remove</button>
+              </div>
+            );
+          })}
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+export default App;
+________________________________
+import "./App.css";
+
+import { useState } from "react";
+
+function App(props) {
+  const [list, setList] = useState([]);
+  const [value, setValue] = useState("");
+  window.localStorage.setItem("items", JSON.stringify(list));
+  const task = {
+    id: list.length == 0 ? 1 : list[list.length - 1].id + 1,
+    taskName: value,
+    completed: false,
+  };
+  const addToList = () => {
+    if (value) {
+      setList([...list, task]);
+      setValue("");
+    }
+  };
+  // getter
+  const textFromStorage = localStorage.getItem("items");
+  const todoListObjectAgain = JSON.parse(textFromStorage);
+  return (
+    <div className="App">
+      <h1></h1>
+      <input
+        type="text"
+        value={value}
+        onChange={(event) => setValue(event.target.value)}
+      />
+      <button onClick={addToList}> Click to Add </button>
+      <ul>
+        {list.length > 0 &&
+          todoListObjectAgain.map((item) => {
+            return <li key={item.id}>{item.taskName} </li>;
+          })}
+      </ul>
+    </div>
+  );
+}
+
+export default App;
